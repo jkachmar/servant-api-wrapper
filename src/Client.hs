@@ -7,7 +7,8 @@
 
 module Client where
 
-import           Control.Monad.Trans.Except (runExceptT)
+import           Control.Monad.Except       (liftIO)
+import           Control.Monad.Trans.Except (ExceptT, runExceptT)
 import           Data.Aeson
 import           Data.Proxy
 import           GHC.Generics
@@ -85,8 +86,14 @@ getResp = client clientApi
 query :: Manager -> BaseUrl -> ClientM Resp
 query = getResp True
 
+getRespList :: ExceptT ServantError IO [Resp]
+getRespList = do
+  manager <- liftIO $ newManager defaultManagerSettings
+  mapM (query manager) urls
+
 run :: IO ()
 run = do
-  manager <- newManager defaultManagerSettings
-  resps <- runExceptT $ mapM (query manager) urls
-  print resps
+  resps <- runExceptT getRespList
+  case resps of
+    Left err -> putStrLn $ "Error: " ++ show err
+    Right _resps -> print _resps
