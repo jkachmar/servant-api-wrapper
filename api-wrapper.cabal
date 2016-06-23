@@ -20,6 +20,7 @@ library
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , http-client
+                     , http-media
                      , mtl
                      , servant
                      , servant-server

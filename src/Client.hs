@@ -1,7 +1,9 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE DataKinds             #-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE TypeOperators         #-}
 
 module Client where
 
@@ -11,8 +13,22 @@ import           Data.Proxy
 import           GHC.Generics
 import           Network.HTTP.Client        (Manager, defaultManagerSettings,
                                              newManager)
+import           Network.HTTP.Media         ((//), (/:))
 import           Servant.API
+import           Servant.API.ContentTypes   (eitherDecodeLenient)
 import           Servant.Client
+
+--------------------------------------------------------------------------------
+-- This is only necessary if the endpoint improperly encodes JSON as
+-- text\plain rather than application\json
+
+data PlainTextJSON
+
+instance Accept PlainTextJSON where
+  contentType _ = "text" // "plain" /: ("charset", "utf-8")
+
+instance FromJSON a => MimeUnrender PlainTextJSON a where
+  mimeUnrender _ = eitherDecodeLenient
 
 --------------------------------------------------------------------------------
 
@@ -56,7 +72,7 @@ instance FromJSON Resp where
   parseJSON _          = mempty
 
 type ClientAPI = "local" :> "slug" :> "goes" :> QueryFlag "here"
-                 :> Get '[JSON] Resp
+                 :> Get '[PlainTextJSON] Resp
 
 clientApi :: Proxy ClientAPI
 clientApi = Proxy

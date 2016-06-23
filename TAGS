@@ -7,36 +7,37 @@ main main5,6
 ./Setup.hs,15
 main main1,2
 
-./src/Client.hs,732
-module Client Client5,6
-newtype IPAddr IPAddr18,19
-newtype IPAddr = IPAddr IPAddr18,19
-addrs addrs20,21
-addrs addrs21,22
-urls urls27,28
-urls urls28,29
-data Difference Difference31,32
-data Difference = DifferenceDifference31,32
-  { totalIn totalIn32,33
-  , totalOut totalOut33,34
-  , netDiff netDiff34,35
-data Resp Resp39,40
-data Resp = RespResp39,40
-  { serial serial40,41
-  , name name41,42
-  , timestamp timestamp42,43
-  , respIn respIn43,44
-  , respOut respOut44,45
-instance instance48,49
-type ClientAPI ClientAPI57,58
-clientApi clientApi60,61
-clientApi clientApi61,62
-getResp getResp63,64
-getResp getResp64,65
-query query68,69
-query query69,70
-run run71,72
-run run72,73
+./src/Client.hs,771
+module Client Client7,8
+data PlainTextJSONPlainTextJSON24,25
+instance instance26,27
+newtype IPAddr IPAddr34,35
+newtype IPAddr = IPAddr IPAddr34,35
+addrs addrs36,37
+addrs addrs37,38
+urls urls43,44
+urls urls44,45
+data Difference Difference47,48
+data Difference = DifferenceDifference47,48
+  { totalIn totalIn48,49
+  , totalOut totalOut49,50
+  , netDiff netDiff50,51
+data Resp Resp55,56
+data Resp = RespResp55,56
+  { serial serial56,57
+  , name name57,58
+  , timestamp timestamp58,59
+  , respIn respIn59,60
+  , respOut respOut60,61
+type ClientAPI ClientAPI73,74
+clientApi clientApi76,77
+clientApi clientApi77,78
+getResp getResp79,80
+getResp getResp80,81
+query query84,85
+query query85,86
+run run87,88
+run run88,89
 
 ./src/Lib.hs,380
 module LibLib3,4
