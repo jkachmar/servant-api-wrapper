@@ -1,35 +1,35 @@
 
-./app/Main.hs,124
+./app/Main.hs,264
 module Main Main0,1
+addrs addrs6,7
 addrs addrs7,8
-addrs addrs8,9
+urls urls13,14
 urls urls14,15
-urls urls15,16
-main main17,18
-main main18,19
+getDifference getDifference19,20
+getDifference getDifference20,21
+getTotalInOut getTotalInOut28,29
+getTotalInOut getTotalInOut29,30
+main main37,38
+main main38,39
 
 ./Setup.hs,15
 main main1,2
 
-./src/Client.hs,504
+./src/Client.hs,364
 module Client Client6,7
-data PlainTextJSONPlainTextJSON26,27
-instance instance28,29
+data PlainTextJSONPlainTextJSON25,26
+instance instance27,28
+urlify urlify36,37
 urlify urlify37,38
-urlify urlify38,39
-type ClientAPI ClientAPI43,44
+type ClientAPI ClientAPI42,43
+clientApi clientApi45,46
 clientApi clientApi46,47
-clientApi clientApi47,48
+getResp getResp48,49
 getResp getResp49,50
-getResp getResp50,51
+query query53,54
 query query54,55
-query query55,56
+getRespList getRespList56,57
 getRespList getRespList57,58
-getRespList getRespList58,59
-getDifference getDifference65,66
-getDifference getDifference66,67
-getTotalInOut getTotalInOut74,75
-getTotalInOut getTotalInOut75,76
 
 ./src/Lib.hs,380
 module LibLib3,4

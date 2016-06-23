@@ -17,8 +17,7 @@ import           Servant.API
 import           Servant.API.ContentTypes   (eitherDecodeLenient)
 import           Servant.Client
 
-import           Types                      (Difference (..), IPAddr (..),
-                                             Resp (..))
+import           Types                      (IPAddr (..), Resp (..))
 
 --------------------------------------------------------------------------------
 -- This is only necessary if the endpoint improperly encodes JSON as
@@ -59,22 +58,3 @@ getRespList :: [BaseUrl] -> ExceptT ServantError IO [Resp]
 getRespList urls = do
   manager <- liftIO $ newManager defaultManagerSettings
   mapM (query manager) urls
-
---------------------------------------------------------------------------------
--- all of these functions would be nicer if this used lenses..
-
-getDifference :: [Resp] -> Difference
-getDifference resps =
-  let listIn  = sum $ fst <$> getTotalInOut resps
-      listOut = sum $ snd <$> getTotalInOut resps
-  in Difference { totalIn = listIn
-                , totalOut = listOut
-                , netDiff = listIn - listOut
-                }
-
-getTotalInOut :: [Resp] -> [(Int, Int)]
-getTotalInOut = map go
-  where go resp =
-          let totIn = respIn resp
-              totOut = respOut resp
-          in (totIn, totOut)
