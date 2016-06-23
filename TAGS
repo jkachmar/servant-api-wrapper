@@ -7,7 +7,7 @@ main main5,6
 ./Setup.hs,15
 main main1,2
 
-./src/Client.hs,833
+./src/Client.hs,981
 module Client Client7,8
 data PlainTextJSONPlainTextJSON25,26
 instance instance27,28
@@ -40,6 +40,10 @@ getRespList getRespList88,89
 getRespList getRespList89,90
 run run93,94
 run run94,95
+getDifference getDifference103,104
+getDifference getDifference104,105
+getTotalInOut getTotalInOut113,114
+getTotalInOut getTotalInOut114,115
 
 ./src/Lib.hs,380
 module LibLib3,4

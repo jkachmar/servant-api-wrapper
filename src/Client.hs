@@ -58,8 +58,8 @@ data Resp = Resp
   { serial    :: String
   , name      :: String
   , timestamp :: String
-  , respIn    :: String
-  , respOut   :: String
+  , respIn    :: Int
+  , respOut   :: Int
   } deriving (Show, Generic)
 
 instance ToJSON Resp
@@ -96,4 +96,24 @@ run = do
   resps <- runExceptT getRespList
   case resps of
     Left err -> putStrLn $ "Error: " ++ show err
-    Right _resps -> print _resps
+    Right respList -> print $ getDifference respList
+
+--------------------------------------------------------------------------------
+-- all of these functions would be nicer if this used lenses..
+
+getDifference :: [Resp] -> Difference
+getDifference resps =
+  let listIn  = sum $ fst <$> getTotalInOut resps
+      listOut = sum $ snd <$> getTotalInOut resps
+  in Difference { totalIn = listIn
+                , totalOut = listOut
+                , netDiff = listIn - listOut
+                }
+
+
+getTotalInOut :: [Resp] -> [(Int, Int)]
+getTotalInOut = map go
+  where go resp =
+          let totIn = respIn resp
+              totOut = respOut resp
+          in (totIn, totOut)
