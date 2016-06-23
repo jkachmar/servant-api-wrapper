@@ -1,0 +1,62 @@
+
+./app/Main.hs,52
+module Main Main0,1
+main main4,5
+main main5,6
+
+./Setup.hs,15
+main main1,2
+
+./src/Client.hs,732
+module Client Client5,6
+newtype IPAddr IPAddr18,19
+newtype IPAddr = IPAddr IPAddr18,19
+addrs addrs20,21
+addrs addrs21,22
+urls urls27,28
+urls urls28,29
+data Difference Difference31,32
+data Difference = DifferenceDifference31,32
+  { totalIn totalIn32,33
+  , totalOut totalOut33,34
+  , netDiff netDiff34,35
+data Resp Resp39,40
+data Resp = RespResp39,40
+  { serial serial40,41
+  , name name41,42
+  , timestamp timestamp42,43
+  , respIn respIn43,44
+  , respOut respOut44,45
+instance instance48,49
+type ClientAPI ClientAPI57,58
+clientApi clientApi60,61
+clientApi clientApi61,62
+getResp getResp63,64
+getResp getResp64,65
+query query68,69
+query query69,70
+run run71,72
+run run72,73
+
+./src/Lib.hs,380
+module LibLib3,4
+data User User13,14
+data User = UserUser13,14
+  { userId userId14,15
+  , userFirstName userFirstName15,16
+  , userLastName userLastName16,17
+type API API21,22
+startApp startApp23,24
+startApp startApp24,25
+app app26,27
+app app27,28
+api api29,30
+api api30,31
+server server32,33
+server server33,34
+users users35,36
+users users36,37
+
+./test/Spec.hs,30
+main main0,1
+main main1,2
