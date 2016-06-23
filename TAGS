@@ -1,49 +1,35 @@
 
-./app/Main.hs,52
+./app/Main.hs,124
 module Main Main0,1
-main main4,5
-main main5,6
+addrs addrs7,8
+addrs addrs8,9
+urls urls14,15
+urls urls15,16
+main main17,18
+main main18,19
 
 ./Setup.hs,15
 main main1,2
 
-./src/Client.hs,981
-module Client Client7,8
-data PlainTextJSONPlainTextJSON25,26
-instance instance27,28
-newtype IPAddr IPAddr35,36
-newtype IPAddr = IPAddr IPAddr35,36
-addrs addrs37,38
-addrs addrs38,39
-urls urls44,45
-urls urls45,46
-data Difference Difference48,49
-data Difference = DifferenceDifference48,49
-  { totalIn totalIn49,50
-  , totalOut totalOut50,51
-  , netDiff netDiff51,52
-data Resp Resp56,57
-data Resp = RespResp56,57
-  { serial serial57,58
-  , name name58,59
-  , timestamp timestamp59,60
-  , respIn respIn60,61
-  , respOut respOut61,62
-type ClientAPI ClientAPI74,75
-clientApi clientApi77,78
-clientApi clientApi78,79
-getResp getResp80,81
-getResp getResp81,82
-query query85,86
-query query86,87
-getRespList getRespList88,89
-getRespList getRespList89,90
-run run93,94
-run run94,95
-getDifference getDifference103,104
-getDifference getDifference104,105
-getTotalInOut getTotalInOut113,114
-getTotalInOut getTotalInOut114,115
+./src/Client.hs,504
+module Client Client6,7
+data PlainTextJSONPlainTextJSON26,27
+instance instance28,29
+urlify urlify37,38
+urlify urlify38,39
+type ClientAPI ClientAPI43,44
+clientApi clientApi46,47
+clientApi clientApi47,48
+getResp getResp49,50
+getResp getResp50,51
+query query54,55
+query query55,56
+getRespList getRespList57,58
+getRespList getRespList58,59
+getDifference getDifference65,66
+getDifference getDifference66,67
+getTotalInOut getTotalInOut74,75
+getTotalInOut getTotalInOut75,76
 
 ./src/Lib.hs,380
 module LibLib3,4
@@ -63,6 +49,24 @@ server server32,33
 server server33,34
 users users35,36
 users users36,37
+
+./src/Types.hs,458
+module Types Types3,4
+newtype IPAddr IPAddr10,11
+newtype IPAddr = IPAddr IPAddr10,11
+data Difference Difference12,13
+data Difference = DifferenceDifference12,13
+  { totalIn totalIn13,14
+  , totalOut totalOut14,15
+  , netDiff netDiff15,16
+data Resp Resp18,19
+data Resp = RespResp18,19
+  { serial serial19,20
+  , name name20,21
+  , timestamp timestamp21,22
+  , respIn respIn22,23
+  , respOut respOut23,24
+instance instance27,28
 
 ./test/Spec.hs,30
 main main0,1
