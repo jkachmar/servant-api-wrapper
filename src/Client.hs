@@ -17,7 +17,7 @@ import           Servant.API
 import           Servant.API.ContentTypes   (eitherDecodeLenient)
 import           Servant.Client
 
-import           Types                      (IPAddr (..), Resp (..))
+import           Types                      (Resp)
 
 --------------------------------------------------------------------------------
 -- This is only necessary if the endpoint improperly encodes JSON as
@@ -34,9 +34,8 @@ instance FromJSON a => MimeUnrender PlainTextJSON a where
 --------------------------------------------------------------------------------
 -- Construct Servant BaseUrls given a list of IPs
 
-urlify :: [IPAddr] -> [BaseUrl]
-urlify = map go
-  where go (IPAddr a) = BaseUrl Http a 80 ""
+urlify :: [String] -> [BaseUrl]
+urlify = map (\addr -> BaseUrl Http addr 80 "")
 
 --------------------------------------------------------------------------------
 

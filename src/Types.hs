@@ -1,12 +1,10 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Types (Difference(..), IPAddr(..), Resp(..)) where
+module Types (Difference(..), Resp(..), Cameras(..), Camera(..)) where
 
 import           Data.Aeson
 import           GHC.Generics
-
-newtype IPAddr = IPAddr String deriving Show
 
 data Difference = Difference
   { totalIn  :: Int
@@ -33,3 +31,13 @@ instance FromJSON Resp where
                          <*> v .: "in"
                          <*> v .: "out"
   parseJSON _          = mempty
+
+data Camera = Camera
+  { camId   :: String
+  , ipAddr :: String
+  } deriving Generic
+instance FromJSON Camera
+
+data Cameras = Cameras
+  { cameras :: [Camera] } deriving Generic
+instance FromJSON Cameras

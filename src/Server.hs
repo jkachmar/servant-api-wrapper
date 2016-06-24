@@ -11,9 +11,9 @@ import           Control.Monad.Trans.Except (ExceptT (..), runExceptT, throwE)
 import           Network.HTTP.Types         (Status (..))
 import           Network.Wai
 import           Network.Wai.Handler.Warp
-import           Servant                    ((:>), Get, JSON, Proxy (..),
-                                             ServantErr (..), Server, err404,
-                                             serve)
+import           Servant                    ((:>), JSON, Post, Proxy (..),
+                                             ReqBody, ServantErr (..), Server,
+                                             err404, serve)
 import           Servant.Client             (BaseUrl)
 import           Servant.Common.Req         (ServantError (..))
 
@@ -22,15 +22,8 @@ import           Types
 
 --------------------------------------------------------------------------------
 
-addrs :: [IPAddr]
-addrs = [ IPAddr "192.0.2.189"
-        , IPAddr "192.0.2.188"
-        , IPAddr "192.0.2.187"
-        , IPAddr "192.0.2.186"
-        ]
-
-urls :: [BaseUrl]
-urls = urlify addrs
+getAddrs :: Cameras -> [BaseUrl]
+getAddrs (Cameras cams) = urlify (ipAddr <$> cams)
 
 --------------------------------------------------------------------------------
 -- this would still probably be nicer with lenses...
@@ -45,13 +38,13 @@ getDifference resps =
   where go :: Resp -> (Int, Int)
         go resp = (,) (respIn resp) (respOut resp)
 
-getDifferences :: ExceptT ServantErr IO Difference
-getDifferences = let resps = liftError (getRespList urls)
-                 in getDifference <$> resps
+getDifferences :: Cameras -> ExceptT ServantErr IO Difference
+getDifferences cams = let resps = liftError (getRespList $ getAddrs cams)
+                   in getDifference <$> resps
 
 --------------------------------------------------------------------------------
 
-type ServerAPI = "occupancy" :> Get '[JSON] Difference
+type ServerAPI = "occupancy" :> ReqBody '[JSON] Cameras :> Post '[JSON] Difference
 
 startApp :: IO ()
 startApp = run 8080 app
