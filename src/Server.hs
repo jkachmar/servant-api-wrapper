@@ -33,38 +33,32 @@ urls :: [BaseUrl]
 urls = urlify addrs
 
 --------------------------------------------------------------------------------
--- all of these functions would be nicer if this used lenses..
+-- this would still probably be nicer with lenses...
 
 getDifference :: [Resp] -> Difference
 getDifference resps =
-  let listIn  = sum $ fst <$> getTotalInOut resps
-      listOut = sum $ snd <$> getTotalInOut resps
-  in Difference { totalIn = listIn
-                , totalOut = listOut
-                , netDiff = listIn - listOut
-                }
+  let listIn  = sum $ fst <$> map go resps
+      listOut = sum $ snd <$> map go resps
 
-getTotalInOut :: [Resp] -> [(Int, Int)]
-getTotalInOut = map go
-  where go resp =
-          let totIn = respIn resp
-              totOut = respOut resp
-          in (totIn, totOut)
+  in Difference listIn listOut (listIn - listOut)
+
+  where go :: Resp -> (Int, Int)
+        go resp = (,) (respIn resp) (respOut resp)
 
 --------------------------------------------------------------------------------
 
-type API = "occupancy" :> Get '[JSON] Difference
+type ServerAPI = "occupancy" :> Get '[JSON] Difference
 
 startApp :: IO ()
 startApp = run 8080 app
 
 app :: Application
-app = serve api server
+app = serve serverApi server
 
-api :: Proxy API
-api = Proxy
+serverApi :: Proxy ServerAPI
+serverApi = Proxy
 
-server :: Server API
+server :: Server ServerAPI
 server = getDifferences
 
 -- There has to be a better way to do this...
