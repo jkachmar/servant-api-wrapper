@@ -51,7 +51,7 @@ getTotalInOut = map go
 
 --------------------------------------------------------------------------------
 
-type API = "occupancy" :> Get '[JSON] [Resp]
+type API = "occupancy" :> Get '[JSON] Difference
 
 startApp :: IO ()
 startApp = run 8080 app
@@ -63,15 +63,25 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = getOccupancy
+server = getDifferences
 
-getOccupancy :: ExceptT ServantErr IO [Resp]
-getOccupancy = convertError $ getRespList urls
+-- There has to be a better way to do this...
+getDifferences :: ExceptT ServantErr IO Difference
+getDifferences = let resps = convertError (getRespList urls)
+            in go . Right <$> resps
+  where go (Right respList) = getDifference respList
+
+--------------------------------------------------------------------------------
+-- Convert client errors to server errors
 
 convertError :: (Show b, MonadIO m) => ExceptT ServantError m b -> ExceptT ServantErr m b
-convertError apiReq = either logAndFail return =<< ExceptT (fmap Right (runExceptT apiReq))
-  where
-    logAndFail e = do
-      liftIO (putStrLn ("Got internal api error: " ++ show e))
-      throwE internalError
-    internalError = ServantErr 500 "Internal Server Error" "" []
+convertError apiReq = either
+  logAndFail
+  return =<< ExceptT
+  (Right <$> runExceptT apiReq)
+
+logAndFail :: (Show a, Show b, MonadIO m) => a -> ExceptT ServantErr m b
+logAndFail e = do
+  liftIO (putStrLn ("Got internal api error: " ++ show e))
+  throwE internalError
+  where internalError = ServantErr 500 "Internal Server Error" "" []
