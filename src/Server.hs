@@ -45,6 +45,10 @@ getDifference resps =
   where go :: Resp -> (Int, Int)
         go resp = (,) (respIn resp) (respOut resp)
 
+getDifferences :: ExceptT ServantErr IO Difference
+getDifferences = let resps = liftError (getRespList urls)
+                 in getDifference <$> resps
+
 --------------------------------------------------------------------------------
 
 type ServerAPI = "occupancy" :> Get '[JSON] Difference
@@ -61,12 +65,6 @@ serverApi = Proxy
 server :: Server ServerAPI
 server = getDifferences
 
--- There has to be a better way to do this...
-getDifferences :: ExceptT ServantErr IO Difference
-getDifferences = let resps = liftError (getRespList urls)
-                 in go . Right <$> resps
-  where go (Right respList) = getDifference respList
-
 --------------------------------------------------------------------------------
 -- Convert client errors to server errors
 
@@ -80,7 +78,6 @@ logAndFail :: (Show b, MonadIO m) => ServantError -> ExceptT ServantErr m b
 logAndFail e = do
   liftIO (putStrLn ("Got internal api error: " ++ show e))
   throwE (convertError e)
-
 
 convertError :: ServantError -> ServantErr
 convertError  (FailureResponse (Status code body) _ _) =
