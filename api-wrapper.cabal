@@ -21,6 +21,7 @@ library
                      , aeson
                      , http-client
                      , http-media
+                     , http-types
                      , mtl
                      , servant
                      , servant-server
