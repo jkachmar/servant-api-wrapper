@@ -1,12 +1,10 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Types (BaseUrl, Difference(..), IPAddr(..), Resp(..), runExceptT) where
+module Types (Difference(..), IPAddr(..), Resp(..)) where
 
-import           Control.Monad.Trans.Except (runExceptT)
 import           Data.Aeson
 import           GHC.Generics
-import           Servant.Client             (BaseUrl)
 
 newtype IPAddr = IPAddr String deriving Show
 
@@ -14,7 +12,9 @@ data Difference = Difference
   { totalIn  :: Int
   , totalOut :: Int
   , netDiff  :: Int
-  } deriving Show
+  } deriving (Show, Generic)
+
+instance ToJSON Difference
 
 data Resp = Resp
   { serial    :: String

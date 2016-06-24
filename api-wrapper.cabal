@@ -10,13 +10,12 @@ maintainer:          example@example.com
 copyright:           2016 Author name here
 category:            Web
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
   exposed-modules:     Client
-                     , Lib
+                     , Server
                      , Types
   build-depends:       base >= 4.7 && < 5
                      , aeson
