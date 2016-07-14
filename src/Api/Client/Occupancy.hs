@@ -7,9 +7,9 @@
 
 module Api.Client.Occupancy where
 
-import           Control.Monad.Except       (liftIO)
+import           Control.Monad.Except       (liftIO, lift)
 import           Control.Monad.IO.Class     (MonadIO)
-import           Control.Monad.Trans.Except (ExceptT (..), runExceptT, throwE)
+import           Control.Monad.Trans.Except (ExceptT (..), runExceptT)
 import           Data.Aeson
 import           Data.Proxy
 import           GHC.Generics
@@ -81,15 +81,16 @@ urlify = map (\addr -> BaseUrl Http addr 80 "")
 -- ServantErr). Obvious errors will be passed through as best as possible, and all
 -- others will be converted to '500 Internal Server Error' messages.
 liftError :: (Show b, MonadIO m) => ExceptT ServantError m b -> ExceptT ServantErr m b
-liftError apiReq = either
-  logAndFail
-  return =<< ExceptT
-  (Right <$> runExceptT apiReq)
+liftError apiReq = do
+  res <- lift $ runExceptT apiReq
+  case res of
+    Left e -> logAndFail e
+    Right v -> return v
 
 logAndFail :: (Show b, MonadIO m) => ServantError -> ExceptT ServantErr m b
 logAndFail e = do
   liftIO (putStrLn ("Got internal api error: " ++ show e))
-  throwE (convertError e)
+  throwError (convertError e)
 
 convertError :: ServantError -> ServantErr
 convertError  (FailureResponse (Status code body) _ _) =
