@@ -49,6 +49,7 @@ library
       , bytestring
       , http-client
       , http-media
+      , http-types
       , monad-control
       , monad-logger
       , mtl
