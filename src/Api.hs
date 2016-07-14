@@ -44,5 +44,4 @@ appApi = Proxy
 -- | Finally, this function takes a configuration and runs our 'OccupancyAPI'
 -- alongside the 'Raw' endpoint that serves all of our files.
 app :: Config -> Application
-app cfg =
-    serve appApi (appToServer cfg :<|> files)
+app cfg = serve appApi (appToServer cfg :<|> files)

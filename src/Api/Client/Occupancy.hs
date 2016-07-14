@@ -76,7 +76,6 @@ getOccSensorList urls = do
 urlify :: [String] -> [BaseUrl]
 urlify = map (\addr -> BaseUrl Http addr 80 "")
 
-
 -- | The following functions may appear a little convoluted. They attempt to lift
 -- errors from the Client to Server monad transformer stacks (i.e. ServantError to
 -- ServantErr). Obvious errors will be passed through as best as possible, and all
@@ -95,5 +94,4 @@ logAndFail e = do
 convertError :: ServantError -> ServantErr
 convertError  (FailureResponse (Status code body) _ _) =
   ServantErr code (show body) "" []
-convertError _ =
-  ServantErr 500 "Internal Server Error" "" []
+convertError _ = ServantErr 500 "Internal Server Error" "" []

@@ -11,6 +11,7 @@ import           Database.Persist.Postgresql (Entity (..), Filter, fromSqlKey,
 import           Servant
 import           Servant.JS                  (vanillaJS, writeJSForAPI)
 
+import           Api.Client.Occupancy
 import           Config                      (App (..))
 import           Models
 
@@ -21,30 +22,35 @@ type OccupancyAPI =
 
 -- | The server that runs the OccupancyAPI.
 cameraServer :: ServerT OccupancyAPI App
-cameraServer = allOccs :<|> singleOcc :<|> createOcc
+cameraServer = allOccs :<|> getDifference :<|> createOcc
 
 -- | Returns all occupancy models in the database.
 allOccs :: App [Entity Occ]
 allOccs =
-    runDb (selectList ([] :: [Filter Occ]) [])
+  runDb (selectList ([] :: [Filter Occ]) [])
 
--- | Returns an occupancy model by name or throws a 404 error.
-singleOcc :: String -> String -> App (Entity Occ)
-singleOcc bldg lvl = do
-    maybeOcc <- runDb (selectFirst [OccBuilding ==. bldg, OccLevel ==. lvl] [])
-    case maybeOcc of
-         Nothing ->
-            throwError err404
-         Just occ ->
-            return occ
+-- | Gets the net occupancy of a floor within a building.
+getDifference :: String -> String -> App (Entity Occ)
+getDifference bldg lvl = do
+  maybeOcc <- runDb (selectFirst [OccBuilding ==. bldg, OccLevel ==. lvl] [])
+  case maybeOcc of
+    Nothing ->
+      throwError err404
+    Just occ ->
+      return occ
+  where go :: Resp -> (Int, Int)
+        go resp = (,) (respIn resp) (respOut resp)
 
 -- | Creates an occupancy model in the database.
 createOcc :: Occ -> App Int64
 createOcc p = do
-    newOcc <- runDb (insert (Occ (occBuilding p) (occLevel p) (occAddr p)))
-    return $ fromSqlKey newOcc
+  newOcc <- runDb (insert (Occ (occBuilding p) (occLevel p) (occAddr p)))
+  return $ fromSqlKey newOcc
 
 -- | Generates JavaScript to query the Occupancy API.
 generateJavaScript :: IO ()
 generateJavaScript =
-    writeJSForAPI (Proxy :: Proxy OccupancyAPI) vanillaJS "./assets/occupancyApi.js"
+    writeJSForAPI
+        (Proxy :: Proxy OccupancyAPI)
+        vanillaJS
+        "./assets/occupancyApi.js"
