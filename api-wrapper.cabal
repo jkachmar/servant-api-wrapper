@@ -1,53 +1,84 @@
 name:                api-wrapper
-version:             0.1.0.0
-synopsis:            Initial project template from stack
-description:         Please see README.md
-homepage:            https://github.com/githubuser/api-wrapper#readme
-license:             BSD3
+version:             0.0.1.0
+synopsis:            Build an API wrapper with Servant and Persistent
+description:         Build an API wrapper with Servant and Persistent
+license:             MIT
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2016 Author name here
+author:              Joe Kachmar
+maintainer:          joseph.kachmar@gmail.com
+copyright:           2016 Joe Kachmar
 category:            Web
 build-type:          Simple
-cabal-version:       >=1.10
-
-library
-  hs-source-dirs:      src
-  exposed-modules:     Client
-                     , Server
-                     , Types
-  build-depends:       base >= 4.7 && < 5
-                     , aeson
-                     , http-client
-                     , http-media
-                     , http-types
-                     , mtl
-                     , servant
-                     , servant-server
-                     , servant-client
-                     , transformers
-                     , wai
-                     , warp
-  default-language:    Haskell2010
-
-executable api-wrapper-exe
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , api-wrapper
-  default-language:    Haskell2010
-
-test-suite api-wrapper-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Spec.hs
-  build-depends:       base
-                     , api-wrapper
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  default-language:    Haskell2010
+cabal-version:       >=1.18
 
 source-repository head
-  type:     git
-  location: https://github.com/githubuser/api-wrapper
+    type:
+        git
+
+executable wrap
+    main-is:
+        Main.hs
+    build-depends:
+        base >=4.7 && <4.9
+      , api-wrapper 
+      , persistent-postgresql
+      , wai
+      , warp
+      , monad-logger
+      , safe
+    hs-source-dirs:
+        app   
+    default-language:
+        Haskell2010
+
+library
+    default-language:
+        Haskell2010
+    hs-source-dirs:
+        src
+    exposed-modules:
+        Config
+      , Models
+      , Api
+      , Api.Server.Occupancy
+    other-modules:
+        Api.Client.Occupancy
+    build-depends: 
+        base >= 4.7 && < 4.9
+      , aeson
+      , bytestring
+      , http-client
+      , http-media
+      , monad-control
+      , monad-logger
+      , mtl
+      , persistent
+      , persistent-postgresql
+      , persistent-template
+      , servant >= 0.7 && < 0.8
+      , servant-client >= 0.7 && < 0.8
+      , servant-js >= 0.7 && < 0.8
+      , servant-server >= 0.7 && < 0.8
+      , transformers
+      , wai
+      , wai-extra
+      , warp
+
+test-suite servant-persistent-test
+    type:
+        exitcode-stdio-1.0
+    hs-source-dirs:
+        test
+    main-is:
+        Spec.hs
+    other-modules:
+        ApiSpec
+    build-depends:
+        base
+      , api-wrapper
+      , QuickCheck
+      , hspec
+    ghc-options:
+        -threaded -rtsopts -with-rtsopts=-N
+    default-language:
+        Haskell2010

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Buildings API Test</title>
+        <script src="occupancyApi.js"></script>
+    </head>
+    <body>
+        <h1>Occupancy</h1>
+        <label for="building">Building: <input id="building" type="text"></input></label>
+        <label for="level">Level: <input id="level" type="text"></input></label>
+        <label for="addr">IP Address: <input id="addr" type="text"></input></label>
+        <button onclick="addOccSensor()">Add Occupancy Sensor</button>
+        <hr>
+        <button onclick="refreshOccSensors()">Refresh Occupancy Sensors</button>
+        <ul id="occ-sensor-list">
+            <li>No occupancy sensors loaded yet...</li>
+        </ul>
+        <script>
+function refreshOccSensors() {
+    getOccs(function(occSensors) {
+        var ul = document.getElementById("occ-sensor-list");
+
+        while (ul.firstChild) {
+            ul.removeChild(ul.firstChild);
+        }
+
+        occSensors.forEach(function(occSensor) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(JSON.stringify(occSensor)));
+            ul.appendChild(li);
+        });
+    }, function(error) {
+        alert("There was an error!");
+        console.log(error);
+    })
+}
+
+function addOccSensor() {
+    var building = document.getElementById("building").value;
+    var level = document.getElementById("level").value;
+    var addr = document.getElementById("addr").value;
+    postOccs(
+        { building: building, level: level, addr: addr },
+        function (response) {
+            console.log("response received: ", response);
+            refreshOccSensors();
+        },
+        function (error) {
+            alert("Uh oh, error occured!");
+            console.log(error);
+        }
+    );
+}
+        </script>
+    </body>
+</html>
