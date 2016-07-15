@@ -38,7 +38,7 @@ getDifference bldg lvl = do
   let listIn  = sum $ respIn  <$> respList
       listOut = sum $ respOut <$> respList
 
-  return $ Difference listIn listIn (listIn - listOut)
+  return $ Difference listIn listOut (listIn - listOut)
 
   where go :: App [Entity Occ]
         go = do

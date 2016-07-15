@@ -49,7 +49,7 @@ function getOccupancyList() {
     getByBuildingByFloor(bOcc, lOcc,
                         function (response) {
                             console.log("response received: ", response);
-                            li.innerHTML = "Floor Occupancy: " + response.net;
+                            li.innerHTML = "Floor Occupancy: " + response.dNet;
                         },
                         function (error) {
                             alert("Error");
