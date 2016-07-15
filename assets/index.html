@@ -15,6 +15,13 @@
         <ul id="occ-sensor-list">
             <li>No occupancy sensors loaded yet...</li>
         </ul>
+        <hr>
+        <label for="bOcc">Building: <input id="bOcc" type="text"></input></label>
+        <label for="lOcc">Level: <input id="lOcc" type="text"></input></label>
+        <button onclick="getOccupancyList()">Get Occupancy</button>
+        <ul id="occupancy">
+            <li id="occList">No occupancy retrieved yet...</li>
+        </ul>
         <script>
 function refreshOccSensors() {
     getOccupancy(function(occSensors) {
@@ -33,6 +40,21 @@ function refreshOccSensors() {
         alert("There was an error!");
         console.log(error);
     })
+}
+
+function getOccupancyList() {
+    var li = document.getElementById("occList");
+    var bOcc = document.getElementById("bOcc").value;
+    var lOcc = document.getElementById("lOcc").value;
+    getByBuildingByFloor(bOcc, lOcc,
+                        function (response) {
+                            console.log("response received: ", response);
+                            li.innerHTML = "Floor Occupancy: " + response.net;
+                        },
+                        function (error) {
+                            alert("Error");
+                            console.log(error);
+                        })
 }
 
 function addOccSensor() {

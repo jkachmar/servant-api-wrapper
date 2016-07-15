@@ -30,7 +30,7 @@ allOccs =
 -- | Gets the net occupancy of a floor within a building.
 getDifference :: String -> String -> App Difference
 getDifference bldg lvl = do
-  occList <- runDb (selectList [OccBuilding ==. bldg, OccLevel ==. lvl] [])
+  occList <- go
 
   let clientResp = getOccSensorList $ (urlify . occAddr . entityVal) <$> occList
   respList <- liftError clientResp
@@ -39,6 +39,13 @@ getDifference bldg lvl = do
       listOut = sum $ respOut <$> respList
 
   return $ Difference listIn listIn (listIn - listOut)
+
+  where go :: App [Entity Occ]
+        go = do
+          query <- runDb (selectList [OccBuilding ==. bldg, OccLevel ==. lvl] [])
+          case query of
+            [] -> throwError err404
+            v  -> return v
 
 -- | Creates an occupancy model in the database.
 createOcc :: Occ -> App Int64
