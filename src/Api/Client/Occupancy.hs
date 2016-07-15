@@ -7,8 +7,7 @@
 
 module Api.Client.Occupancy where
 
-import           Control.Monad.Except       (liftIO, lift)
-import           Control.Monad.IO.Class     (MonadIO)
+import           Control.Monad.Except       (liftIO)
 import           Control.Monad.Trans.Except (ExceptT (..), runExceptT)
 import           Data.Aeson
 import           Data.Proxy
@@ -20,6 +19,8 @@ import           Network.HTTP.Types         (Status (..))
 import           Servant
 import           Servant.API.ContentTypes   (eitherDecodeLenient)
 import           Servant.Client
+
+import Config
 
 data Resp = Resp
   { serial    :: String
@@ -73,24 +74,19 @@ getOccSensorList urls = do
 
 -- A small helper function to convert URLs in string form (e.g. 192.168.1.1) to
 -- a simple, Http BaseUrl on port 80
-urlify :: [String] -> [BaseUrl]
-urlify = map (\addr -> BaseUrl Http addr 80 "")
+urlify :: String -> BaseUrl
+urlify addr = BaseUrl Http addr 80 ""
 
 -- | The following functions may appear a little convoluted. They attempt to lift
--- errors from the Client to Server monad transformer stacks (i.e. ServantError to
--- ServantErr). Obvious errors will be passed through as best as possible, and all
--- others will be converted to '500 Internal Server Error' messages.
-liftError :: (Show b, MonadIO m) => ExceptT ServantError m b -> ExceptT ServantErr m b
+-- errors from the ServantError monad transformer to our custom App transformer.
+-- Obvious errors will be passed through as best as possible, and all others
+-- will be converted to '500 Internal Server Error' messages.
+liftError :: Show b => ExceptT ServantError IO b -> App b
 liftError apiReq = do
-  res <- lift $ runExceptT apiReq
+  res <- liftIO (runExceptT apiReq)
   case res of
-    Left e -> logAndFail e
+    Left e -> throwError $ convertError e
     Right v -> return v
-
-logAndFail :: (Show b, MonadIO m) => ServantError -> ExceptT ServantErr m b
-logAndFail e = do
-  liftIO (putStrLn ("Got internal api error: " ++ show e))
-  throwError (convertError e)
 
 convertError :: ServantError -> ServantErr
 convertError  (FailureResponse (Status code body) _ _) =

@@ -17,7 +17,7 @@
         </ul>
         <script>
 function refreshOccSensors() {
-    getOccs(function(occSensors) {
+    getOccupancy(function(occSensors) {
         var ul = document.getElementById("occ-sensor-list");
 
         while (ul.firstChild) {
@@ -39,7 +39,7 @@ function addOccSensor() {
     var building = document.getElementById("building").value;
     var level = document.getElementById("level").value;
     var addr = document.getElementById("addr").value;
-    postOccs(
+    postOccupancy(
         { building: building, level: level, addr: addr },
         function (response) {
             console.log("response received: ", response);

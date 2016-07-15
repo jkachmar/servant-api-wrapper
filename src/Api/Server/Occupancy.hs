@@ -3,11 +3,9 @@
 
 module Api.Server.Occupancy where
 
-import           Control.Monad.Except
 import           Data.Int                    (Int64)
 import           Database.Persist.Postgresql (Entity (..), Filter, fromSqlKey,
-                                              insert, selectFirst, selectList,
-                                              (==.))
+                                              insert, selectList, (==.))
 import           Servant
 import           Servant.JS                  (vanillaJS, writeJSForAPI)
 
@@ -17,7 +15,7 @@ import           Models
 
 type OccupancyAPI =
   "occupancy" :> Get '[JSON] [Entity Occ]
-  :<|> Capture "building" String :> Capture "floor" String :> Get '[JSON] (Entity Occ)
+  :<|> Capture "building" String :> Capture "floor" String :> Get '[JSON] Difference
   :<|> "occupancy" :> ReqBody '[JSON] Occ :> Post '[JSON] Int64
 
 -- | The server that runs the OccupancyAPI.
@@ -30,16 +28,17 @@ allOccs =
   runDb (selectList ([] :: [Filter Occ]) [])
 
 -- | Gets the net occupancy of a floor within a building.
-getDifference :: String -> String -> App (Entity Occ)
+getDifference :: String -> String -> App Difference
 getDifference bldg lvl = do
-  maybeOcc <- runDb (selectFirst [OccBuilding ==. bldg, OccLevel ==. lvl] [])
-  case maybeOcc of
-    Nothing ->
-      throwError err404
-    Just occ ->
-      return occ
-  where go :: Resp -> (Int, Int)
-        go resp = (,) (respIn resp) (respOut resp)
+  occList <- runDb (selectList [OccBuilding ==. bldg, OccLevel ==. lvl] [])
+
+  let clientResp = getOccSensorList $ (urlify . occAddr . entityVal) <$> occList
+  respList <- liftError clientResp
+
+  let listIn  = sum $ respIn  <$> respList
+      listOut = sum $ respOut <$> respList
+
+  return $ Difference listIn listIn (listIn - listOut)
 
 -- | Creates an occupancy model in the database.
 createOcc :: Occ -> App Int64

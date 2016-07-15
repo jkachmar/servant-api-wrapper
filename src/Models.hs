@@ -14,11 +14,20 @@
 module Models where
 
 import           Control.Monad.Reader
+import           Data.Aeson
 import           Database.Persist.Sql
 import           Database.Persist.TH  (mkMigrate, mkPersist, persistLowerCase,
                                        share, sqlSettings)
+import           GHC.Generics
 
 import           Config
+
+data Difference = Difference
+  { dIn  :: Int
+  , dOut :: Int
+  , dNet :: Int
+  } deriving (Eq, Show, Generic)
+instance ToJSON Difference
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Occ json
