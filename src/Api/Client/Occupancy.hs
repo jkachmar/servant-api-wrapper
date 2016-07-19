@@ -54,7 +54,7 @@ instance FromJSON a => MimeUnrender PlainTextJSON a where
 -- | As with the server API type, we use ':>' to build a route out of
 -- component types. e.g. this type accesses the '/local/slug/goes?here'
 -- endpoint.
-type ClientAPI = "local" :> "slug" :> "goes" :> QueryFlag "here"
+type ClientAPI = "local" :> "people-counter" :> ".api" :> QueryFlag "live-sum.json"
                  :> Get '[PlainTextJSON] Resp
 
 -- Boilerplate required to convert the API type into a function that can be
@@ -84,9 +84,7 @@ urlify addr = BaseUrl Http addr 80 ""
 liftError :: Show b => ExceptT ServantError IO b -> App b
 liftError apiReq = do
   res <- liftIO (runExceptT apiReq)
-  case res of
-    Left e -> throwError $ convertError e
-    Right v -> return v
+  either (throwError . convertError) return res
 
 convertError :: ServantError -> ServantErr
 convertError  (FailureResponse (Status code body) _ _) =
